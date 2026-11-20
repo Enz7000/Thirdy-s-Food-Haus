@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Menu - Thirdy's Restaurant</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-page="menu">
+<div id="customerNavbar"></div>
+
+<main class="section">
+  <h2>Our Menu</h2>
+  <div class="menu-controls">
+    <input type="text" id="search" placeholder="Search menu...">
+    <select id="category"><option value="">All Categories</option></select>
+  </div>
+  <div class="cards" id="menuGrid"></div>
+</main>
+
+<footer class="footer">
+  <div><h4>Thirdy's Restaurant</h4></div>
+  <div><a href="../index.html">Home</a><a href="../about.html">About Us</a><a href="../contact.html">Contact</a></div>
+  <div><p>[editable]</p></div>
+</footer>
+
+<script src="../js/store.js"></script>
+<script src="../js/menu.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/guard.js"></script>
+<script src="js/customer-nav.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Guard - require customer auth
+  if (!Guard.requireCustomerAuth()) return;
+  
+  CustomerNav.renderCustomerNavbar();
+  CustomerNav.updateCartBadge();
+  
+  // The menu.js already handles rendering the menu grid
+  // Just need to ensure it uses the correct container
+  populateCategoryFilter('category');
+  setupMenuFilters();
+  renderMenuGrid(menuItems, 'menuGrid');
+});
+</script>
+</body>
+</html>

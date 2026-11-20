@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Order Queue - Thirdy's Admin</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="adminNavbar"></div>
+
+<main class="section">
+  <div class="admin-header">
+    <h2>Order Queue</h2>
+    <div class="queue-summary">
+      <div class="summary-card">
+        <span class="summary-label">Active Orders</span>
+        <span class="summary-value" id="countActive">0</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Awaiting Verification</span>
+        <span class="summary-value" id="countAwaiting">0</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Ready for Pickup</span>
+        <span class="summary-value" id="countReady">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-tabs" role="tablist">
+    <button class="filter-tab active" role="tab" data-filter="active" aria-selected="true">Active</button>
+    <button class="filter-tab" role="tab" data-filter="awaiting" aria-selected="false">Awaiting Verification</button>
+    <button class="filter-tab" role="tab" data-filter="confirmed" aria-selected="false">Confirmed</button>
+    <button class="filter-tab" role="tab" data-filter="preparing" aria-selected="false">Preparing</button>
+    <button class="filter-tab" role="tab" data-filter="ready" aria-selected="false">Ready for Pickup</button>
+    <button class="filter-tab" role="tab" data-filter="completed" aria-selected="false">Completed</button>
+    <button class="filter-tab" role="tab" data-filter="cancelled" aria-selected="false">Cancelled</button>
+  </div>
+
+  <div id="emptyOrders" class="empty" hidden>
+    <p>No orders found.</p>
+  </div>
+
+  <div id="ordersQueue" class="orders-queue"></div>
+</main>
+
+<footer class="footer">
+  <div><h4>Thirdy's Restaurant</h4></div>
+  <div><a href="../index.html">Home</a><a href="../about.html">About Us</a><a href="../contact.html">Contact</a></div>
+  <div><p>[editable]</p></div>
+</footer>
+
+<script src="../js/store.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/guard.js"></script>
+<script src="js/admin-nav.js"></script>
+<script src="../js/admin-orders.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!Guard.requireAdminAuth()) return;
+  
+  AdminNav.renderAdminNavbar();
+  
+  initAdminOrders();
+});
+</script>
+</body>
+</html>

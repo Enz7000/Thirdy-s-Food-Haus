@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pickup Info - Thirdy's Restaurant</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-page="pickup">
+<div id="customerNavbar"></div>
+
+<main class="section">
+  <h2>Pickup Information</h2>
+  
+  <div class="pickup-info">
+    <div class="pickup-card">
+      <h3>How Pickup Works</h3>
+      <ol class="pickup-steps">
+        <li>
+          <strong>Place your order online</strong>
+          <p>Browse the menu, add items to cart, and complete checkout with a 50% downpayment.</p>
+        </li>
+        <li>
+          <strong>Receive confirmation</strong>
+          <p>You'll get an Order ID and a 4-character Pickup Code. Save these!</p>
+        </li>
+        <li>
+          <strong>Wait for verification</strong>
+          <p>Our team will verify your downpayment. You'll be notified when your order is confirmed.</p>
+        </li>
+        <li>
+          <strong>Visit the Pre-Order Pickup counter</strong>
+          <p>Go to the designated pickup area at the restaurant on your scheduled date/time.</p>
+        </li>
+        <li>
+          <strong>Show your Order ID or Pickup Code</strong>
+          <p>Present your Order ID or Pickup Code to the staff at the Pre-Order Pickup counter.</p>
+        </li>
+        <li>
+          <strong>Pay the remaining balance</strong>
+          <p>Pay the remaining 50% in cash and collect your freshly prepared order.</p>
+        </li>
+      </ol>
+    </div>
+    
+    <div class="pickup-card">
+      <h3>Pickup Location & Hours</h3>
+      <div class="pickup-details">
+        <div class="detail-item">
+          <strong>Address:</strong>
+          <p id="pickupAddress">[Pickup address - editable in admin]</p>
+        </div>
+        <div class="detail-item">
+          <strong>Hours:</strong>
+          <p id="pickupHours">[Pickup hours - editable in admin]</p>
+        </div>
+        <div class="detail-item">
+          <strong>Counter:</strong>
+          <p>Pre-Order Pickup Counter (look for the sign)</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="pickup-card">
+      <h3>Important Reminders</h3>
+      <ul class="reminders">
+        <li>Bring a valid ID and your Order ID / Pickup Code</li>
+        <li>Arrive within your scheduled pickup window</li>
+        <li>Orders are held for 30 minutes past the pickup time</li>
+        <li>Downpayment is non-refundable for no-shows</li>
+        <li>Check your order status in <a href="orders.html">My Orders</a> for updates</li>
+      </ul>
+    </div>
+    
+    <div class="pickup-card payment-accounts">
+      <h3>Downpayment Accounts</h3>
+      <div class="payment-methods">
+        <div class="payment-method">
+          <h4>GCash</h4>
+          <p>Number: <span id="gcashNumber">[GCash number]</span></p>
+          <p>Account: <span id="gcashName">[GCash account name]</span></p>
+        </div>
+        <div class="payment-method">
+          <h4>Maya</h4>
+          <p>Number: <span id="mayaNumber">[Maya number]</span></p>
+          <p>Account: <span id="mayaName">[Maya account name]</span></p>
+        </div>
+      </div>
+      <p class="payment-note">Send exactly the downpayment amount shown at checkout. Keep the transaction reference number for verification.</p>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div><h4>Thirdy's Restaurant</h4></div>
+  <div><a href="../index.html">Home</a><a href="../about.html">About Us</a><a href="../contact.html">Contact</a></div>
+  <div><p>[editable]</p></div>
+</footer>
+
+<script src="../js/store.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/guard.js"></script>
+<script src="js/customer-nav.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!Guard.requireCustomerAuth()) return;
+  
+  CustomerNav.renderCustomerNavbar();
+  CustomerNav.updateCartBadge();
+  
+  loadPickupConfig();
+});
+
+function loadPickupConfig() {
+  const config = Store.getPickupConfigWithDefaults();
+  document.getElementById('pickupAddress').textContent = config.address;
+  document.getElementById('pickupHours').textContent = config.hours;
+  document.getElementById('gcashNumber').textContent = config.gcashNumber;
+  document.getElementById('gcashName').textContent = config.gcashName;
+  document.getElementById('mayaNumber').textContent = config.mayaNumber;
+  document.getElementById('mayaName').textContent = config.mayaName;
+}
+</script>
+</body>
+</html>

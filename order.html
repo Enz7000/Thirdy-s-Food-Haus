@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Redirecting - Thirdy's Restaurant</title>
+<meta http-equiv="refresh" content="0; url=auth.html">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="navbar">
+  <a class="brand" href="index.html"><img src="images/logo.svg" alt="" onerror="this.style.display='none'"><span>Thirdy's Restaurant</span></a>
+  <button class="menu-toggle" id="menuToggle">☰</button>
+  <nav id="nav">
+    <a href="index.html">Home</a>
+    <a href="auth.html">Order Online</a>
+    <a href="about.html">About Us</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+<main class="section" style="text-align:center;padding:4rem 1.5rem;">
+  <h2>Redirecting to Sign In...</h2>
+  <p>Please wait while we redirect you to the login page.</p>
+  <p><a href="auth.html" class="btn primary">Go to Sign In</a></p>
+</main>
+<footer class="footer">
+  <div><h4>Thirdy's Restaurant</h4></div>
+  <div><a href="index.html">Home</a><a href="auth.html">Order Online</a><a href="about.html">About Us</a><a href="contact.html">Contact</a></div>
+  <div><p>[editable]</p></div>
+</footer>
+<script>
+window.location.href = 'auth.html';
+</script>
+</body>
+</html>

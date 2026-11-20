@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Sign In / Sign Up - Thirdy's Restaurant</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="navbar">
+  <a class="brand" href="index.html"><img src="images/logo.svg" alt="" onerror="this.style.display='none'"><span>Thirdy's Restaurant</span></a>
+  <button class="menu-toggle" id="menuToggle">☰</button>
+  <nav id="nav">
+    <a href="index.html">Home</a>
+    <a href="about.html">About Us</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<main class="section auth-page">
+  <div class="auth-container">
+    <!-- Customer Auth Tabs -->
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab active" role="tab" id="tab-login" aria-selected="true" aria-controls="panel-login" data-tab="login">Log In</button>
+      <button class="auth-tab" role="tab" id="tab-signup" aria-selected="false" aria-controls="panel-signup" data-tab="signup">Sign Up</button>
+    </div>
+
+    <!-- Customer Login Form -->
+    <div class="auth-panel active" role="tabpanel" id="panel-login" aria-labelledby="tab-login">
+      <h2>Welcome Back</h2>
+      <p class="auth-subtitle">Sign in to your account to order ahead</p>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" required autocomplete="email">
+          <span class="error" id="errLoginEmail"></span>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" required autocomplete="current-password">
+          <span class="error" id="errLoginPassword"></span>
+        </div>
+        <button type="submit" class="btn primary btn-block">Sign In</button>
+      </form>
+      <p class="auth-switch">Don't have an account? <button type="button" class="link-btn" data-tab="signup">Sign Up</button></p>
+    </div>
+
+    <!-- Customer Sign Up Form -->
+    <div class="auth-panel" role="tabpanel" id="panel-signup" aria-labelledby="tab-signup" hidden>
+      <h2>Create Account</h2>
+      <p class="auth-subtitle">Sign up to start ordering</p>
+      <form id="signupForm">
+        <div class="form-group">
+          <label for="signupName">Full Name</label>
+          <input type="text" id="signupName" required autocomplete="name">
+          <span class="error" id="errSignupName"></span>
+        </div>
+        <div class="form-group">
+          <label for="signupMobile">Mobile Number</label>
+          <input type="tel" id="signupMobile" required placeholder="09XXXXXXXXX" autocomplete="tel">
+          <span class="error" id="errSignupMobile"></span>
+        </div>
+        <div class="form-group">
+          <label for="signupEmail">Email</label>
+          <input type="email" id="signupEmail" required autocomplete="email">
+          <span class="error" id="errSignupEmail"></span>
+        </div>
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <input type="password" id="signupPassword" required minlength="6" autocomplete="new-password">
+          <span class="error" id="errSignupPassword"></span>
+        </div>
+        <div class="form-group">
+          <label for="signupConfirmPassword">Confirm Password</label>
+          <input type="password" id="signupConfirmPassword" required autocomplete="new-password">
+          <span class="error" id="errSignupConfirmPassword"></span>
+        </div>
+        <button type="submit" class="btn primary btn-block">Create Account</button>
+      </form>
+      <p class="auth-switch">Already have an account? <button type="button" class="link-btn" data-tab="login">Sign In</button></p>
+    </div>
+
+    <!-- Admin Login Section -->
+    <div class="admin-login-section">
+      <div class="divider"><span>or</span></div>
+      <button type="button" class="btn secondary btn-block" id="btnAdminLogin">Admin Login</button>
+    </div>
+
+    <!-- Admin Login Form (hidden by default) -->
+    <div class="auth-panel admin-panel" role="tabpanel" id="panel-admin" hidden>
+      <h2>Admin Login</h2>
+      <p class="auth-subtitle">Access the order management dashboard</p>
+      <form id="adminLoginForm">
+        <div class="form-group">
+          <label for="adminEmail">Email</label>
+          <input type="email" id="adminEmail" required autocomplete="email">
+          <span class="error" id="errAdminEmail"></span>
+        </div>
+        <div class="form-group">
+          <label for="adminPassword">Password</label>
+          <input type="password" id="adminPassword" required autocomplete="current-password">
+          <span class="error" id="errAdminPassword"></span>
+        </div>
+        <button type="submit" class="btn primary btn-block">Sign In as Admin</button>
+      </form>
+      <p class="auth-switch"><button type="button" class="link-btn" id="btnBackToCustomer">Back to Customer Login</button></p>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div><h4>Thirdy's Restaurant</h4></div>
+  <div><a href="index.html">Home</a><a href="auth.html">Order Online</a><a href="about.html">About Us</a><a href="contact.html">Contact</a></div>
+  <div><p>[editable]</p></div>
+</footer>
+
+<script src="js/store.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/guard.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  // Redirect if already logged in
+  Guard.redirectIfLoggedIn();
+  Guard.initMobileMenu();
+  await Auth.seedAdminAccount();
+
+  const tabs = document.querySelectorAll('.auth-tab');
+  const panels = document.querySelectorAll('.auth-panel');
+  const adminPanel = document.getElementById('panel-admin');
+  const btnAdminLogin = document.getElementById('btnAdminLogin');
+  const btnBackToCustomer = document.getElementById('btnBackToCustomer');
+  const linkBtns = document.querySelectorAll('.link-btn[data-tab]');
+
+  function showTab(tabName) {
+    tabs.forEach(t => {
+      const isActive = t.dataset.tab === tabName;
+      t.classList.toggle('active', isActive);
+      t.setAttribute('aria-selected', isActive);
+    });
+    panels.forEach(p => {
+      const isActive = p.id === 'panel-' + tabName;
+      p.classList.toggle('active', isActive);
+      p.hidden = !isActive;
+    });
+    adminPanel.hidden = true;
+    adminPanel.classList.remove('active');
+    clearErrors();
+  }
+
+  function showAdminPanel() {
+    tabs.forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
+    panels.forEach(p => {
+      p.classList.remove('active');
+      p.hidden = true;
+    });
+    adminPanel.hidden = false;
+    adminPanel.classList.add('active');
+    clearErrors();
+  }
+
+  function clearErrors() {
+    document.querySelectorAll('.error').forEach(e => e.textContent = '');
+  }
+
+  function setError(id, message) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = message;
+  }
+
+  // Tab switching
+  tabs.forEach(tab => tab.addEventListener('click', () => showTab(tab.dataset.tab)));
+  linkBtns.forEach(btn => btn.addEventListener('click', () => showTab(btn.dataset.tab)));
+
+  // Admin login button
+  btnAdminLogin.addEventListener('click', showAdminPanel);
+  btnBackToCustomer.addEventListener('click', () => showTab('login'));
+
+  // Customer Login Form
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearErrors();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    let ok = true;
+    if (!email) { setError('errLoginEmail', 'Email is required'); ok = false; }
+    if (!password) { setError('errLoginPassword', 'Password is required'); ok = false; }
+    if (!ok) return;
+
+    const result = await Auth.loginCustomer(email, password);
+    if (result.success) {
+      window.location.href = 'customer/menu.html';
+    } else {
+      Object.entries(result.errors).forEach(([key, msg]) => setError('errLogin' + key.charAt(0).toUpperCase() + key.slice(1), msg));
+    }
+  });
+
+  // Customer Sign Up Form
+  document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearErrors();
+    const data = {
+      name: document.getElementById('signupName').value.trim(),
+      mobile: document.getElementById('signupMobile').value.trim(),
+      email: document.getElementById('signupEmail').value.trim(),
+      password: document.getElementById('signupPassword').value,
+      confirmPassword: document.getElementById('signupConfirmPassword').value
+    };
+    const result = await Auth.signUpCustomer(data);
+    if (result.success) {
+      window.location.href = 'customer/menu.html';
+    } else {
+      Object.entries(result.errors).forEach(([key, msg]) => setError('errSignup' + key.charAt(0).toUpperCase() + key.slice(1), msg));
+    }
+  });
+
+  // Admin Login Form
+  document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearErrors();
+    const email = document.getElementById('adminEmail').value.trim();
+    const password = document.getElementById('adminPassword').value;
+    let ok = true;
+    if (!email) { setError('errAdminEmail', 'Email is required'); ok = false; }
+    if (!password) { setError('errAdminPassword', 'Password is required'); ok = false; }
+    if (!ok) return;
+
+    const result = await Auth.loginAdmin(email, password);
+    if (result.success) {
+      window.location.href = 'admin/orders.html';
+    } else {
+      Object.entries(result.errors).forEach(([key, msg]) => setError('errAdmin' + key.charAt(0).toUpperCase() + key.slice(1), msg));
+    }
+  });
+});
+</script>
+</body>
+</html>

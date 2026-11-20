@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>My Orders - Thirdy's Restaurant</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-page="orders">
+<div id="customerNavbar"></div>
+
+<main class="section">
+  <h2>My Orders</h2>
+  
+  <div id="emptyOrders" class="empty" hidden>
+    <p>You haven't placed any orders yet.</p>
+    <a href="menu.html" class="btn primary">Browse Menu</a>
+  </div>
+  
+  <div id="ordersList" hidden></div>
+</main>
+
+<footer class="footer">
+  <div><h4>Thirdy's Restaurant</h4></div>
+  <div><a href="../index.html">Home</a><a href="../about.html">About Us</a><a href="../contact.html">Contact</a></div>
+  <div><p>[editable]</p></div>
+</footer>
+
+<script src="../js/store.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/guard.js"></script>
+<script src="js/customer-nav.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!Guard.requireCustomerAuth()) return;
+  
+  CustomerNav.renderCustomerNavbar();
+  CustomerNav.updateCartBadge();
+  
+  renderOrders();
+  setupAutoRefresh();
+});
+
+function renderOrders() {
+  const user = Store.getCurrentUser();
+  if (!user) return;
+  
+  const orders = Store.getOrdersByUserId(user.id).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const list = document.getElementById('ordersList');
+  const empty = document.getElementById('emptyOrders');
+  
+  if (orders.length === 0) {
+    list.hidden = true;
+    empty.hidden = false;
+    return;
+  }
+  
+  empty.hidden = true;
+  list.hidden = false;
+  
+  list.innerHTML = orders.map(order => `
+    <article class="order-card ${order.status === 'Cancelled' ? 'cancelled' : ''}" data-order-id="${order.id}">
+      <div class="order-header">
+        <div class="order-id">
+          <strong>Order ID:</strong> ${Guard.escapeHtml(order.id)}
+          <span class="pickup-code">Pickup Code: ${Guard.escapeHtml(order.pickupCode)}</span>
+        </div>
+        <div class="order-status status-${order.status.toLowerCase().replace(' ', '-')}">${Guard.escapeHtml(order.status)}</div>
+      </div>
+      
+      <div class="order-progress">
+        ${renderProgressTracker(order.status)}
+      </div>
+      
+      <div class="order-items">
+        ${order.items.map(item => `
+          <div class="order-item">
+            <span class="item-name">${Guard.escapeHtml(item.name)}</span>
+            <span class="item-qty">×${item.qty}</span>
+            <span class="item-price">${Guard.formatCurrency(item.price * item.qty)}</span>
+          </div>
+        `).join('')}
+      </div>
+      
+      <div class="order-details-grid">
+        <div><strong>Pickup:</strong> ${Guard.formatDateTime(order.pickupDate, order.pickupTime)}</div>
+        <div><strong>Total:</strong> ${Guard.formatCurrency(order.total)}</div>
+        <div><strong>Downpayment Paid:</strong> ${Guard.formatCurrency(order.downpayment)}</div>
+        <div><strong>Balance Due:</strong> ${Guard.formatCurrency(order.balance)}</div>
+        ${order.paymentRef ? `<div><strong>Payment Ref:</strong> ${Guard.escapeHtml(order.paymentRef)}</div>` : ''}
+        ${order.instructions ? `<div class="instructions"><strong>Instructions:</strong> ${Guard.escapeHtml(order.instructions)}</div>` : ''}
+        <div class="order-time"><strong>Ordered:</strong> ${new Date(order.createdAt).toLocaleString()}</div>
+      </div>
+      
+      ${order.paymentProof ? `
+        <div class="payment-proof">
+          <strong>Payment Proof:</strong>
+          <img src="${order.paymentProof}" alt="Payment receipt" onclick="openImageModal(this.src)">
+        </div>
+      ` : ''}
+    </article>
+  `).join('');
+}
+
+function renderProgressTracker(currentStatus) {
+  const statuses = [
+    'Awaiting Downpayment Verification',
+    'Confirmed',
+    'Preparing',
+    'Ready for Pickup',
+    'Completed'
+  ];
+  
+  const currentIndex = statuses.indexOf(currentStatus);
+  const isCancelled = currentStatus === 'Cancelled';
+  
+  if (isCancelled) {
+    return '<div class="progress-tracker cancelled"><div class="progress-step cancelled">Cancelled</div></div>';
+  }
+  
+  return `
+    <div class="progress-tracker">
+      ${statuses.map((status, i) => `
+        <div class="progress-step ${i < currentIndex ? 'completed' : i === currentIndex ? 'active' : ''} ${i === currentIndex && currentStatus === 'Awaiting Downpayment Verification' ? 'awaiting' : ''}">
+          <div class="step-circle">${i + 1}</div>
+          <div class="step-label">${status}</div>
+        </div>
+        ${i < statuses.length - 1 ? '<div class="step-connector"></div>' : ''}
+      `).join('')}
+    </div>
+  `;
+}
+
+function setupAutoRefresh() {
+  // Refresh on storage event (other tabs)
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'thirdys_orders') {
+      renderOrders();
+    }
+  });
+  
+  // Periodic refresh
+  setInterval(renderOrders, 5000);
+}
+
+function openImageModal(src) {
+  const modal = document.createElement('div');
+  modal.className = 'image-modal';
+  modal.innerHTML = `<img src="${src}" alt="Payment proof">`;
+  modal.onclick = () => modal.remove();
+  document.body.appendChild(modal);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Cart & Checkout - Thirdy's Restaurant</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-page="cart">
+<div id="customerNavbar"></div>
+
+<main class="section">
+  <div class="cart-checkout-layout">
+    <!-- Cart Section -->
+    <div class="cart-section">
+      <h2>Your Cart</h2>
+      <div id="cartItems"></div>
+      <div id="emptyCart" class="empty">Your cart is empty. <a href="menu.html">Browse the menu</a> to add items.</div>
+      
+      <div class="cart-summary" id="cartSummary" hidden>
+        <div class="summary-row"><span>Subtotal</span><span id="cartSubtotal">₱0.00</span></div>
+        <div class="summary-row"><span>Downpayment (50%)</span><span id="downpaymentDue" class="highlight">₱0.00</span></div>
+        <div class="summary-row"><span>Balance Due on Pickup</span><span id="balanceDue">₱0.00</span></div>
+        <div class="summary-divider"></div>
+        <div class="summary-row total"><span>Order Total</span><span id="cartTotal">₱0.00</span></div>
+      </div>
+    </div>
+
+    <!-- Checkout Section -->
+    <div class="checkout-section" id="checkoutSection" hidden>
+      <h2>Checkout</h2>
+      <div class="payment-info">
+        <h3>Payment: Cash on Pickup with 50% Downpayment</h3>
+        <p>To secure your order, a 50% downpayment is required via GCash or Maya. The remaining balance is paid in cash when you pick up your order.</p>
+        
+        <div class="payment-details">
+          <div class="payment-method">
+            <strong>GCash</strong>
+            <div>Number: <span id="gcashNumber">[GCash number]</span></div>
+            <div>Account: <span id="gcashName">[GCash account name]</span></div>
+          </div>
+          <div class="payment-method">
+            <strong>Maya</strong>
+            <div>Number: <span id="mayaNumber">[Maya number]</span></div>
+            <div>Account: <span id="mayaName">[Maya account name]</span></div>
+          </div>
+        </div>
+        
+        <div class="policy-notice">
+          <strong>Important:</strong> <span id="policyText">Orders without a verified downpayment will not be prepared. Downpayment is non-refundable for no-shows.</span>
+        </div>
+      </div>
+
+      <form id="checkoutForm">
+        <h3>Customer Details</h3>
+        <div class="form-group">
+          <label for="checkoutName">Full Name</label>
+          <input type="text" id="checkoutName" required readonly>
+        </div>
+        <div class="form-group">
+          <label for="checkoutMobile">Mobile Number</label>
+          <input type="tel" id="checkoutMobile" required readonly>
+        </div>
+
+        <h3>Pickup Schedule</h3>
+        <div class="form-group">
+          <label for="pickupDate">Pickup Date</label>
+          <input type="date" id="pickupDate" required>
+          <span class="error" id="errPickupDate"></span>
+        </div>
+        <div class="form-group">
+          <label for="pickupTime">Pickup Time</label>
+          <select id="pickupTime" required disabled>
+            <option value="">Select a date first</option>
+          </select>
+          <span class="error" id="errPickupTime"></span>
+        </div>
+
+        <h3>Payment Verification</h3>
+        <div class="form-group">
+          <label for="paymentRef">Payment Reference Number <span class="required">*</span></label>
+          <input type="text" id="paymentRef" required placeholder="Enter the reference number from your GCash/Maya transaction">
+          <span class="error" id="errPaymentRef"></span>
+        </div>
+        <div class="form-group">
+          <label for="paymentProof">Receipt Screenshot (optional, max 1MB)</label>
+          <input type="file" id="paymentProof" accept="image/*">
+          <span class="error" id="errPaymentProof"></span>
+          <div id="paymentProofPreview" class="proof-preview" hidden></div>
+        </div>
+
+        <h3>Special Instructions</h3>
+        <div class="form-group">
+          <label for="checkoutInstr">Special Instructions (optional)</label>
+          <textarea id="checkoutInstr" rows="3" placeholder="Any special requests for your order..."></textarea>
+        </div>
+
+        <button type="submit" class="btn primary btn-block btn-lg" id="btnPlaceOrder">Place Pre-Order</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Order Confirmation -->
+  <div id="orderConfirmation" class="order-confirmation" hidden>
+    <div class="confirmation-card">
+      <div class="success-icon">✓</div>
+      <h3>Order Placed Successfully!</h3>
+      <p>Your order has been received and is awaiting downpayment verification.</p>
+      <div class="order-details">
+        <div><strong>Order ID:</strong> <span id="confirmOrderId"></span></div>
+        <div><strong>Pickup Code:</strong> <span id="confirmPickupCode"></span></div>
+        <div><strong>Pickup:</strong> <span id="confirmPickupDateTime"></span></div>
+        <div><strong>Total:</strong> <span id="confirmTotal"></span></div>
+        <div><strong>Downpayment Due:</strong> <span id="confirmDownpayment"></span></div>
+        <div><strong>Balance Due on Pickup:</strong> <span id="confirmBalance"></span></div>
+      </div>
+      <div class="payment-reminder">
+        <p><strong>Next Step:</strong> Send the downpayment to the GCash/Maya account above and enter the reference number. Your order will be prepared once the admin verifies your payment.</p>
+      </div>
+      <div class="confirmation-actions">
+        <a href="orders.html" class="btn primary">View My Orders</a>
+        <a href="menu.html" class="btn secondary">Continue Ordering</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div><h4>Thirdy's Restaurant</h4></div>
+  <div><a href="../index.html">Home</a><a href="../about.html">About Us</a><a href="../contact.html">Contact</a></div>
+  <div><p>[editable]</p></div>
+</footer>
+
+<script src="../js/store.js"></script>
+<script src="../js/menu.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/guard.js"></script>
+<script src="js/customer-nav.js"></script>
+<script src="../js/order-customer.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!Guard.requireCustomerAuth()) return;
+  
+  CustomerNav.renderCustomerNavbar();
+  CustomerNav.updateCartBadge();
+  
+  initCustomerCheckout();
+});
+</script>
+</body>
+</html>
